@@ -1,0 +1,13 @@
+[package]
+name = "selectors-rs"
+version = "0.1.0"
+authors = ["Andrew Williams <williams.andrew@gmail.com>"]
+build = "build.rs"
+
+[build-dependencies]
+lalrpop = { git = "https://github.com/lalrpop/lalrpop" }
+
+
+[dependencies]
+lalrpop-util = { git = "https://github.com/lalrpop/lalrpop" }
+regex = "0.2.1"
