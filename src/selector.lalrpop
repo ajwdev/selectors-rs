@@ -1,4 +1,3 @@
-use std::str::FromStr;
 use ast::{Expr, Operator};
 
 // See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
@@ -6,7 +5,7 @@ use ast::{Expr, Operator};
 grammar;
 
 pub Expr: Box<Expr<'input>> = {
-    Expr ExprOp Term => Box::new(Expr::Op(<>)),
+    Term ExprOp Term => Box::new(Expr::Op(<>)),
     Term,
 };
 
@@ -16,14 +15,13 @@ ExprOp: Operator = {
 };
 
 pub Term: Box<Expr<'input>> = {
-    LabelValue => Box::new(Expr::Atom(<>)),
-    "(" <Expr> ")"
+    LabelKey => Box::new(Expr::Atom(<>)),
 };
 
-LabelValue: &'input str = {
-  <r"([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){0,63}"> => <>,
-}
+//LabelValue: &'input str = {
+//    <r"([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){0,63}"> => <>,
+//}
 
 LabelKey: &'input str = {
-  <r"([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){0,63}"> => <>,
+    <r"([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){0,63}"> => <>,
 }

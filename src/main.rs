@@ -11,13 +11,36 @@ fn main() {
 }
 
 #[test]
-fn selector() {
+fn selector_labels() {
     assert!(selector::TermParser::new().parse("foo").is_ok());
-    println!("{:?}", selector::TermParser::new().parse("foo").unwrap());
-    assert!(selector::TermParser::new().parse("((foo))").is_ok());
-    assert!(selector::TermParser::new().parse("((foo)").is_err());
-    assert!(selector::TermParser::new().parse("()").is_err());
     assert!(selector::TermParser::new().parse("foo_bar").is_ok());
+    assert!(selector::TermParser::new().parse("foo.bar").is_ok());
+    assert!(selector::TermParser::new().parse("(foo)").is_err());
+    assert!(selector::TermParser::new().parse("-foo").is_err());
+    assert!(selector::TermParser::new().parse(".foo").is_err());
+    assert!(selector::TermParser::new().parse("_foo").is_err());
+}
 
+#[test]
+fn selector() {
+    assert!(selector::ExprParser::new().parse("foo").is_ok());
+    assert!(selector::ExprParser::new().parse("foo_bar").is_ok());
+    assert!(selector::ExprParser::new().parse("foo.bar").is_ok());
+
+    assert!(selector::ExprParser::new().parse("foo = bar").is_ok());
     assert!(selector::ExprParser::new().parse("foo == bar").is_ok());
+    assert!(selector::ExprParser::new().parse("foo != bar").is_ok());
+
+    assert!(selector::ExprParser::new().parse("foo=bar").is_ok());
+    assert!(selector::ExprParser::new().parse("foo==bar").is_ok());
+    assert!(selector::ExprParser::new().parse("foo!=bar").is_ok());
+
+    assert!(selector::ExprParser::new().parse("foo= bar").is_ok());
+    assert!(selector::ExprParser::new().parse("foo== bar").is_ok());
+    assert!(selector::ExprParser::new().parse("foo!= bar").is_ok());
+
+    //assert!(selector::TermParser::new().parse("").is_ok());
+
+    assert!(selector::ExprParser::new().parse("foo baz = bar").is_err());
+    assert!(selector::ExprParser::new().parse("foo = ").is_err());
 }
