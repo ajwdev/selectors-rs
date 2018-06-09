@@ -1,12 +1,19 @@
-use ast::{Expr, Operator};
+use ast::{Expr, Operator, Selector};
 
 // See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
 
 grammar;
 
-pub Expr: Box<Expr<'input>> = {
-    Term ExprOp Term => Box::new(Expr::Op(<>)),
-    Term,
+pub Selector: Selector<'input> = {
+    // There is a feature request out there to add `mut` keyword to LALRPOP. Key
+    // an eye out and adjust to use .append here instead of ::combine
+    <s:Selector> "," <e:Expr> => Selector::combine(s, e),
+    Expr => Selector::new(vec![<>]),
+}
+
+Expr: Box<Expr<'input>> = {
+    <k:LabelKey> <op:ExprOp> <v:LabelValue> => Box::new(Expr::Op(k, op, v)),
+    <LabelKey>
 };
 
 ExprOp: Operator = {
@@ -14,14 +21,20 @@ ExprOp: Operator = {
     "!=" => Operator::NotEqual,
 };
 
-pub Term: Box<Expr<'input>> = {
-    LabelKey => Box::new(Expr::Atom(<>)),
-};
+pub LabelKey: Box<Expr<'input>> = {
+    KeyWithPrefix => Box::new(Expr::Key(<>)),
+    KeyOrValue => Box::new(Expr::Key(<>)),
+}
 
-//LabelValue: &'input str = {
-//    <r"([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){0,63}"> => <>,
-//}
+pub LabelValue: Box<Expr<'input>> = {
+    KeyOrValue => Box::new(Expr::Value(<>)),
+}
 
-LabelKey: &'input str = {
-    <r"([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){0,63}"> => <>,
+// Removes ambiquity in the parser between keys with prefixes and values/prefixless keys. 
+// Example: "example.com/foo" versus just "foo"
+match {
+    r"(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9]){1,253}/([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){1,63}" => KeyWithPrefix
+} else {
+    r"([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){1,63}" => KeyOrValue,
+    _
 }
