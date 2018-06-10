@@ -7,20 +7,20 @@ grammar;
 pub Selector: Selector<'input> = {
     // There is a feature request out there to add `mut` keyword to LALRPOP. Key
     // an eye out and adjust to use .append here instead of ::combine
-    <s:Selector> "," <e:Expr> => Selector::combine(s, e),
+    <Selector> "," <Expr> => Selector::combine(<>),
     Expr => Selector::new(vec![<>]),
 }
 
 Expr: Box<Expr<'input>> = {
-    <k:LabelKey> <op:ExprOp> <v:LabelValue> => Box::new(Expr::Op(k, op, v)),
+    LabelKey ExprOp LabelValue => Box::new(Expr::Op(<>)),
     "!" <LabelKey> => Box::new(Expr::NotExists(<>)),
     LabelKey => Box::new(Expr::Exists(<>)),
-};
+}
 
 ExprOp: Operator = {
     r"=?=" => Operator::Equal,
     "!=" => Operator::NotEqual,
-};
+}
 
 pub LabelKey: Box<LabelKey<'input>> = {
     KeyWithPrefix => {
