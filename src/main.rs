@@ -8,6 +8,7 @@ lalrpop_mod!(pub selector);
 fn main() {
     println!("{:?}", selector::LabelKeyParser::new().parse("foo").unwrap());
     println!("{:?}", selector::LabelKeyParser::new().parse("example.com/foo").unwrap());
+    println!("{:?}", selector::SelectorParser::new().parse("example.com/foo").unwrap());
     println!("{:?}", selector::LabelValueParser::new().parse("bar").unwrap());
 
     println!("{:?}", selector::SelectorParser::new().parse("foo").unwrap());
@@ -15,6 +16,7 @@ fn main() {
     println!("{:?}", selector::SelectorParser::new().parse("foo!=bar").unwrap());
     println!("{:?}", selector::SelectorParser::new().parse("foo=bar,something==else").unwrap());
     println!("{:?}", selector::SelectorParser::new().parse("app,foo!=bar").unwrap());
+    println!("{:?}", selector::SelectorParser::new().parse("example.com/app=something,foo!=bar").unwrap());
 }
 
 #[test]

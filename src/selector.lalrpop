@@ -23,7 +23,12 @@ ExprOp: Operator = {
 };
 
 pub LabelKey: Box<LabelKey<'input>> = {
-    KeyWithPrefix => Box::new(LabelKey::WithPrefix("", <>)), // TODO
+    KeyWithPrefix => {
+        // KeyWithPrefix should not allow patterns with multiple "/" so
+        // this should be safe. Still a little gross though
+        let groups: Vec<&str> = <>.split("/").collect();
+        Box::new(LabelKey::WithPrefix(groups[0], groups[1]))
+    },
     KeyOrValue => Box::new(LabelKey::NoPrefix(<>)),
 }
 
@@ -31,11 +36,14 @@ pub LabelValue: Box<LabelValue<'input>> = {
     KeyOrValue => Box::new(LabelValue::Value(<>)),
 }
 
-// Removes ambiquity in the parser between keys with prefixes and values/prefixless keys. 
+// Removes ambiquity in the parser between keys with prefixes and values/prefixless keys.
 // Example: "example.com/foo" versus just "foo"
+//
+// Code related to label validation can be found below.
+// https://github.com/kubernetes/apimachinery/blob/521145febf93d5639dce48a49ee8dc080863b034/pkg/util/validation/validation.go#L126
 match {
-    r"(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9]){1,253}/([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){1,63}" => KeyWithPrefix
+    r"(?i)([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*){1,253}/([a-z0-9][-._a-z0-9]+[a-z0-9]){1,63}" => KeyWithPrefix,
 } else {
-    r"([a-zA-Z0-9][-._a-zA-Z0-9]+[a-zA-Z0-9]){1,63}" => KeyOrValue,
+    r"(?i)([a-z0-9][-._a-z0-9]+[a-z0-9]){1,63}" => KeyOrValue,
     _
 }
