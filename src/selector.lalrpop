@@ -1,4 +1,4 @@
-use ast::{Expr, Operator, Selector};
+use ast::{Expr, Operator, LabelKey, LabelValue, Selector};
 
 // See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#syntax-and-character-set
 
@@ -13,7 +13,8 @@ pub Selector: Selector<'input> = {
 
 Expr: Box<Expr<'input>> = {
     <k:LabelKey> <op:ExprOp> <v:LabelValue> => Box::new(Expr::Op(k, op, v)),
-    <LabelKey>
+    "!" <LabelKey> => Box::new(Expr::NotExists(<>)),
+    LabelKey => Box::new(Expr::Exists(<>)),
 };
 
 ExprOp: Operator = {
@@ -21,13 +22,13 @@ ExprOp: Operator = {
     "!=" => Operator::NotEqual,
 };
 
-pub LabelKey: Box<Expr<'input>> = {
-    KeyWithPrefix => Box::new(Expr::Key(<>)),
-    KeyOrValue => Box::new(Expr::Key(<>)),
+pub LabelKey: Box<LabelKey<'input>> = {
+    KeyWithPrefix => Box::new(LabelKey::WithPrefix("", <>)), // TODO
+    KeyOrValue => Box::new(LabelKey::NoPrefix(<>)),
 }
 
-pub LabelValue: Box<Expr<'input>> = {
-    KeyOrValue => Box::new(Expr::Value(<>)),
+pub LabelValue: Box<LabelValue<'input>> = {
+    KeyOrValue => Box::new(LabelValue::Value(<>)),
 }
 
 // Removes ambiquity in the parser between keys with prefixes and values/prefixless keys. 

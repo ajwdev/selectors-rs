@@ -27,9 +27,9 @@ impl<'input> Selector<'input> {
 }
 
 pub enum Expr<'input> {
-    Key(&'input str),
-    Value(&'input str),
-    Op(Box<Expr<'input>>, Operator, Box<Expr<'input>>),
+    Exists(Box<LabelKey<'input>>),
+    NotExists(Box<LabelKey<'input>>),
+    Op(Box<LabelKey<'input>>, Operator, Box<LabelValue<'input>>),
     Error,
 }
 
@@ -39,20 +39,24 @@ pub enum Operator {
     NotEqual,
 }
 
-// #[derive(Copy, Clone)]
-// pub enum LabelKey {
-//     WithPrefix(&'input str, &'input str),
-//     NoPrefix(&'input str),
-// }
+#[derive(Debug)]
+pub enum LabelKey<'input> {
+    WithPrefix(&'input str, &'input str),
+    NoPrefix(&'input str),
+}
+
+#[derive(Debug)]
+pub enum LabelValue<'input> {
+    Value(&'input str),
+    Empty
+}
 
 impl<'input> Debug for Expr<'input> {
     fn fmt(&self, fmt: &mut Formatter) -> Result<(), Error> {
         use self::Expr::*;
         match *self {
-            Key(label) => {
-                write!(fmt, "Key({:?})", label)
-            }
-            Value(n) => write!(fmt, "Value({:?})", n),
+            Exists(ref key) => write!(fmt, "Exists({:?})", key),
+            NotExists(ref key) => write!(fmt, "NotExists({:?})", key),
             Op(ref l, op, ref r) => {
                 match op {
                     Operator::Equal => write!(fmt, "Equal({:?}, {:?})", l, r),

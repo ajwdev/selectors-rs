@@ -11,6 +11,7 @@ fn main() {
     println!("{:?}", selector::LabelValueParser::new().parse("bar").unwrap());
 
     println!("{:?}", selector::SelectorParser::new().parse("foo").unwrap());
+    println!("{:?}", selector::SelectorParser::new().parse("! foo").unwrap());
     println!("{:?}", selector::SelectorParser::new().parse("foo!=bar").unwrap());
     println!("{:?}", selector::SelectorParser::new().parse("foo=bar,something==else").unwrap());
     println!("{:?}", selector::SelectorParser::new().parse("app,foo!=bar").unwrap());
