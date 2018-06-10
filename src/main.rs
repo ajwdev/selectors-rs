@@ -19,38 +19,45 @@ fn main() {
     println!("{:?}", selector::SelectorParser::new().parse("example.com/app=something,foo!=bar").unwrap());
 }
 
-#[test]
-fn selector_labels() {
-    assert!(selector::LabelKeyParser::new().parse("foo").is_ok());
-    assert!(selector::LabelKeyParser::new().parse("foo_bar").is_ok());
-    assert!(selector::LabelKeyParser::new().parse("foo.bar").is_ok());
-    assert!(selector::LabelKeyParser::new().parse("foo bar").is_err());
-    assert!(selector::LabelKeyParser::new().parse("(foo)").is_err());
-    assert!(selector::LabelKeyParser::new().parse("-foo").is_err());
-    assert!(selector::LabelKeyParser::new().parse(".foo").is_err());
-    assert!(selector::LabelKeyParser::new().parse("_foo").is_err());
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn selector() {
-    assert!(selector::SelectorParser::new().parse("foo").is_ok());
-    assert!(selector::SelectorParser::new().parse("foo_bar").is_ok());
-    assert!(selector::SelectorParser::new().parse("foo.bar").is_ok());
+    #[test]
+    fn selector_labels() {
+        assert!(selector::LabelKeyParser::new().parse("foo").is_ok());
+        assert!(selector::LabelKeyParser::new().parse("example.com/foo").is_ok());
+        assert!(selector::LabelKeyParser::new().parse("foo_bar").is_ok());
+        assert!(selector::LabelKeyParser::new().parse("foo.bar").is_ok());
+        assert!(selector::LabelKeyParser::new().parse("foo bar").is_err());
+        assert!(selector::LabelKeyParser::new().parse("(foo)").is_err());
+        assert!(selector::LabelKeyParser::new().parse("-foo").is_err());
+        assert!(selector::LabelKeyParser::new().parse(".foo").is_err());
+        assert!(selector::LabelKeyParser::new().parse("_foo").is_err());
+        assert!(selector::LabelKeyParser::new().parse("bar/example.com/foo").is_err());
+    }
 
-    assert!(selector::SelectorParser::new().parse("foo = bar").is_ok());
-    assert!(selector::SelectorParser::new().parse("foo == bar").is_ok());
-    assert!(selector::SelectorParser::new().parse("foo != bar").is_ok());
+    #[test]
+    fn selector() {
+        assert!(selector::SelectorParser::new().parse("foo").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo_bar").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo.bar").is_ok());
 
-    assert!(selector::SelectorParser::new().parse("foo=bar").is_ok());
-    assert!(selector::SelectorParser::new().parse("foo==bar").is_ok());
-    assert!(selector::SelectorParser::new().parse("foo!=bar").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo = bar").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo == bar").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo != bar").is_ok());
 
-    assert!(selector::SelectorParser::new().parse("foo= bar").is_ok());
-    assert!(selector::SelectorParser::new().parse("foo== bar").is_ok());
-    assert!(selector::SelectorParser::new().parse("foo!= bar").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo=bar").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo==bar").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo!=bar").is_ok());
 
-    //assert!(selector::SelectorParser::new().parse("").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo= bar").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo== bar").is_ok());
+        assert!(selector::SelectorParser::new().parse("foo!= bar").is_ok());
 
-    assert!(selector::SelectorParser::new().parse("foo baz = bar").is_err());
-    assert!(selector::SelectorParser::new().parse("foo = ").is_err());
+        //assert!(selector::SelectorParser::new().parse("").is_ok());
+
+        assert!(selector::SelectorParser::new().parse("foo baz = bar").is_err());
+        assert!(selector::SelectorParser::new().parse("foo = ").is_err());
+    }
 }
