@@ -5,8 +5,6 @@ pub use ast::labels::*;
 pub use ast::operators::*;
 pub use ast::expressions::*;
 
-use std::fmt::{Debug, Error, Formatter};
-
 #[derive(Debug)]
 pub struct Selector<'input> {
     expressions: Vec<Box<Expr<'input>>>
