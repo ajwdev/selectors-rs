@@ -11,11 +11,11 @@ pub Selector: Selector<'input> = {
     Expr => Selector::new(vec![<>]),
 }
 
-Expr: Box<Expr<'input>> = {
-    LabelKey SetOp LabelValueGroup => Box::new(Expr::SetOp(<>)),
-    LabelKey ExprOp LabelValue => Box::new(Expr::Op(<>)),
-    "!" <LabelKey> => Box::new(Expr::NotExists(<>)),
-    LabelKey => Box::new(Expr::Exists(<>)),
+Expr: Expr<'input> = {
+    LabelKey SetOp LabelValueGroup => Expr::SetOp(<>),
+    LabelKey ExprOp LabelValue => Expr::Op(<>),
+    "!" <LabelKey> => Expr::NotExists(<>),
+    LabelKey => Expr::Exists(<>),
 }
 
 SetOp: SetOperator = {
@@ -32,18 +32,18 @@ pub LabelValueGroup = {
     "(" <Group<LabelValue>> ")",
 }
 
-pub LabelKey: Box<LabelKey<'input>> = {
+pub LabelKey: LabelKey<'input> = {
     KeyWithPrefix => {
         // KeyWithPrefix should not allow patterns with multiple "/" so
         // this should be safe. Still a little gross though
         let groups: Vec<&str> = <>.split("/").collect();
-        Box::new(LabelKey::WithPrefix(groups[0], groups[1]))
+        LabelKey::WithPrefix(groups[0], groups[1])
     },
-    KeyOrValue => Box::new(LabelKey::NoPrefix(<>)),
+    KeyOrValue => LabelKey::NoPrefix(<>),
 }
 
-pub LabelValue: Box<LabelValue<'input>> = {
-    KeyOrValue => Box::new(LabelValue::Value(<>)),
+pub LabelValue: LabelValue<'input> = {
+    KeyOrValue => LabelValue::Value(<>),
 }
 
 Group<T>: Vec<T> = {

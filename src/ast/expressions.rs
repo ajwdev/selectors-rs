@@ -4,10 +4,10 @@ use ast::operators::*;
 use std::fmt::{Debug, Error, Formatter};
 
 pub enum Expr<'input> {
-    Exists(Box<LabelKey<'input>>),
-    NotExists(Box<LabelKey<'input>>),
-    Op(Box<LabelKey<'input>>, Operator, Box<LabelValue<'input>>),
-    SetOp(Box<LabelKey<'input>>, SetOperator, Vec<Box<LabelValue<'input>>>),
+    Exists(LabelKey<'input>),
+    NotExists(LabelKey<'input>),
+    Op(LabelKey<'input>, Operator, LabelValue<'input>),
+    SetOp(LabelKey<'input>, SetOperator, Vec<LabelValue<'input>>),
     Error,
 }
 
