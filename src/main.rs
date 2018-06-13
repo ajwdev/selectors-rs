@@ -6,9 +6,12 @@ mod ast;
 lalrpop_mod!(pub selector);
 
 fn main() {
+    println!("{:?}", selector::LabelValueGroupParser::new().parse("(foo,bar,baz,)").unwrap());
     println!("{:?}", selector::LabelKeyParser::new().parse("foo").unwrap());
     println!("{:?}", selector::LabelKeyParser::new().parse("example.com/foo").unwrap());
     println!("{:?}", selector::SelectorParser::new().parse("example.com/foo").unwrap());
+    println!("{:?}", selector::SelectorParser::new().parse("foo in (something,else)").unwrap());
+    println!("{:?}", selector::SelectorParser::new().parse("foo in (something,else),bar==baz,bar != baz").unwrap());
     println!("{:?}", selector::LabelValueParser::new().parse("bar").unwrap());
 
     println!("{:?}", selector::SelectorParser::new().parse("foo").unwrap());
