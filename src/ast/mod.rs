@@ -22,11 +22,11 @@ impl<'input> Selector<'input> {
             expressions: selector.expressions,
         };
 
-        new_selector.append(expr);
+        new_selector.push(expr);
         new_selector
     }
 
-    pub fn append(&mut self, expr: Box<Expr<'input>>) {
+    pub fn push(&mut self, expr: Box<Expr<'input>>) {
         self.expressions.push(expr);
     }
 }
