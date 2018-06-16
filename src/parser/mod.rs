@@ -55,6 +55,14 @@ mod tests {
     }
 
     #[test]
+    fn selector_expressions() {
+        let p = ExprParser::new();
+
+        assert!(p.parse("env in (qa)").is_ok());
+        assert!(p.parse("env notin (qa)").is_ok());
+    }
+
+    #[test]
     fn selector_lexing() {
         let p = SelectorParser::new();
 
@@ -78,5 +86,8 @@ mod tests {
 
         assert!(p.parse("foo baz = bar").is_err());
         assert!(p.parse("foo = ").is_err());
+
+        println!("{:?}", p.parse("env in (qa),app!=foo,!bar").unwrap());
+        assert!(p.parse("env in (qa),app!=foo,!bar").is_ok());
     }
 }
