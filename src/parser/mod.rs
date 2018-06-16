@@ -9,6 +9,8 @@ mod tests {
     fn selector_label_keys() {
         let p = LabelKeyParser::new();
 
+        assert!(p.parse("f").is_ok());
+        assert!(p.parse("fo").is_ok());
         assert!(p.parse("foo").is_ok());
         assert!(p.parse("example.com/foo").is_ok());
         assert!(p.parse("foo_bar").is_ok());
@@ -26,6 +28,8 @@ mod tests {
     fn selector_label_values() {
         let p = LabelValueParser::new();
 
+        assert!(p.parse("f").is_ok());
+        assert!(p.parse("fo").is_ok());
         assert!(p.parse("foo").is_ok());
         assert!(p.parse("foo_bar").is_ok());
         assert!(p.parse("foo.bar").is_ok());

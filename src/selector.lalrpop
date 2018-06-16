@@ -5,13 +5,13 @@ use ast::{Expr, Operator, SetOperator, LabelKey, LabelValue, Selector};
 grammar;
 
 pub Selector: Selector<'input> = {
-    // There is a feature request out there to add `mut` keyword to LALRPOP. Key
-    // an eye out and adjust to use .append here instead of ::combine
+    // There is a feature request out there to add `mut` keyword to LALRPOP. Keep
+    // an eye out and adjust to use .push here instead of ::combine
     <Selector> "," <Expr> => Selector::combine(<>),
     Expr => Selector::new(vec![<>]),
 }
 
-Expr: Expr<'input> = {
+pub Expr: Expr<'input> = {
     LabelKey SetOp LabelValueGroup => Expr::SetOp(<>),
     LabelKey ExprOp LabelValue => Expr::Op(<>),
     "!" <LabelKey> => Expr::NotExists(<>),
@@ -65,6 +65,6 @@ Group<T>: Vec<T> = {
 match {
     r"(?i)([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*){1,253}/([a-z0-9][-._a-z0-9]+[a-z0-9]){1,63}" => KeyWithPrefix,
 } else {
-    r"(?i)([a-z0-9][-._a-z0-9]+[a-z0-9]){1,63}" => KeyOrValue,
+    r"(?i)([a-z0-9]([-._a-z0-9]*[a-z0-9])?){1,63}" => KeyOrValue,
     _
 }
