@@ -8,7 +8,6 @@ pub enum Expr<'input> {
     NotExists(LabelKey<'input>),
     Op(LabelKey<'input>, Operator, LabelValue<'input>),
     SetOp(LabelKey<'input>, SetOperator, Vec<LabelValue<'input>>),
-    Error,
 }
 
 impl<'input> Debug for Expr<'input> {
@@ -29,7 +28,6 @@ impl<'input> Debug for Expr<'input> {
                     SetOperator::NotIn => write!(fmt, "NotIn({:?}, {:?})", l, r),
                 }
             }
-            Error => write!(fmt, "error"),
         }
     }
 }
