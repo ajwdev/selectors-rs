@@ -90,4 +90,15 @@ mod tests {
         println!("{:?}", p.parse("env in (qa),app!=foo,!bar").unwrap());
         assert!(p.parse("env in (qa),app!=foo,!bar").is_ok());
     }
+
+    #[test]
+    #[ignore]
+    fn set_operators_as_keys_and_labels() {
+        let p = SelectorParser::new();
+
+        assert!(p.parse("foo = notin").is_ok());
+        assert!(p.parse("notin = foo").is_ok());
+        assert!(p.parse("foo = in").is_ok());
+        assert!(p.parse("in = foo").is_ok());
+    }
 }
