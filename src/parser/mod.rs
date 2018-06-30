@@ -118,7 +118,6 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn set_operators_as_keys_and_labels() {
         let p = SelectorParser::new();
 

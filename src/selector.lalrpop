@@ -40,10 +40,14 @@ pub LabelKey: LabelKey<'input> = {
         LabelKey::WithPrefix(groups[0], groups[1])
     },
     KeyOrValue => LabelKey::NoPrefix(<>),
+    NotIn => LabelKey::NoPrefix(<>),
+    In => LabelKey::NoPrefix(<>),
 }
 
 pub LabelValue: LabelValue<'input> = {
     KeyOrValue => LabelValue::Value(<>),
+    NotIn => LabelValue::Value(<>),
+    In => LabelValue::Value(<>),
 }
 
 Group<T>: Vec<T> = {
